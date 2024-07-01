@@ -1,0 +1,42 @@
+body {
+	font-family: sans-serif;
+	text-align: center;
+}
+
+// 1. Your custom variables and variable overwrites.
+//$global-link-color: #DA7D02;
+
+// 2. Import default variables and available mixins.
+@import "uikit/variables-theme.scss";
+@import "uikit/mixins-theme.scss";
+// 3. Your custom mixin overwrites.
+//@mixin hook-card() { color: #000; }
+
+// 4. Import UIkit.
+@import "uikit/uikit-theme.scss";
+
+//@import 'uikit.min';
+
+.button-auth {
+  @extend .uk-button;
+  @extend .uk-button-default;
+}
+
+.title-auth {
+  @extend .uk-text-large;
+  @extend .uk-text-capitalize;
+  @extend .uk-heading-small;
+  @extend .uk-heading-divider;
+}
+
+.sensitive-data {
+  @extend .uk-margin;
+  @extend .uk-card;
+  @extend .uk-card-default;
+  @extend .uk-card-body;
+  @extend .uk-card-hover;
+  @extend .uk-width-1-2;
+  @extend .uk-animation-slide-top-small;
+  white-space: pre-line;
+}
+
