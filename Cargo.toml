@@ -11,16 +11,12 @@ axum = { version = "0.7", optional = true }
 axum-login = { version = "0.15", optional = true }
 console_error_panic_hook = "0.1"
 futures-util = { version = "0.3", optional = true }
-# Using leptos 0.6.12 + Patch local
-leptos = { path = "/zdrive/repos/leptos/leptos", features = [
-    "nightly",
-    "experimental-islands",
-] }
-leptos_axum = { path = "/zdrive/repos/leptos/integrations/axum", features = [
+leptos = { version = "0.6.12", features = ["nightly", "experimental-islands"] }
+leptos_axum = { version = "0.6.12", features = [
     "experimental-islands",
 ], optional = true }
-leptos_meta = { path = "/zdrive/repos/leptos/meta", features = ["nightly"] }
-leptos_router = { path = "/zdrive/repos/leptos/router", features = ["nightly"] }
+leptos_meta = { version = "0.6.12", features = ["nightly"] }
+leptos_router = { version = "0.6.12", features = ["nightly"] }
 pin-project-lite = { version = "0.2", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }

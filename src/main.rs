@@ -20,8 +20,8 @@ async fn main() {
     use axum_login::tower_sessions::{MemoryStore, SessionManagerLayer};
     use axum_login::AuthManagerLayerBuilder;
 
-    let mut auth_backend: auth::Backend = auth::Backend::default();
-    // roles: 255 = Admin and 125 = User
+    let mut auth_backend = auth::Backend::default();
+    // roles: Admin = 255 and User = 100
     let _ = auth_backend.register_user("leptos_user", &[255]);
 
     let auth_layer = AuthManagerLayerBuilder::new(

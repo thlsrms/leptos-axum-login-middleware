@@ -7,7 +7,7 @@ mod ssr_modules {
     pub mod fileserv;
     pub mod middlewares;
 
-    pub use middlewares::{AuthorizationLayer, RequireLoginLayer};
+    pub(super) use middlewares::{auth_role, require_login};
 }
 #[cfg(feature = "ssr")]
 pub use ssr_modules::*;
@@ -84,9 +84,6 @@ fn ProtectedOcean(children: Children) -> impl IntoView {
             } else {
                 set_auth(LoggedIn(false));
             }}
-            <Show when=move || logged_in.get().is_some_and(|v| v.is_err()) >
-                {window().location().set_href("/").unwrap()}
-            </Show>
         </Suspense>
         {children()}
     }
@@ -176,12 +173,6 @@ fn Logout() -> impl IntoView {
     }
 }
 
-#[server(CheckSession)]
-#[middleware(RequireLoginLayer::new("/"))]
-async fn check_session() -> Result<(), ServerFnError> {
-    Ok(())
-}
-
 #[server(LoginSFn)]
 async fn login() -> Result<(), ServerFnError> {
     use auth::{AuthSession, UserId};
@@ -232,15 +223,21 @@ async fn logout() -> Result<(), ServerFnError> {
     }
 }
 
+#[server(CheckSession)]
+#[middleware(compose_from_fn!(require_login))]
+async fn check_session() -> Result<(), ServerFnError> {
+    Ok(())
+}
+
 #[server(FetchData)]
-#[middleware(AuthorizationLayer::new(auth::Role::User, "/"))]
+#[middleware(compose_from_fn!(require_login, |req| auth_role(req, auth::Role::User)))]
 async fn fetch_data() -> Result<String, ServerFnError> {
     use auth::AuthSession;
     use axum::Extension;
     use leptos_axum::extract;
 
     let Extension(session) = extract::<Extension<AuthSession>>().await?;
-    println!("Session: {:?}", session);
+    println!("Session id {0:?}", session.user);
 
     let sensitive_information =
         "Failure is not an Option<T>, it's a Result<T,E> \nYou're a member!";
@@ -248,7 +245,7 @@ async fn fetch_data() -> Result<String, ServerFnError> {
 }
 
 #[server(FetchSecretData)]
-#[middleware(AuthorizationLayer::new(auth::Role::Admin, "/"))]
+#[middleware(compose_from_fn!(require_login, |req| auth_role(req, auth::Role::Admin) ))]
 async fn super_secret_data() -> Result<String, ServerFnError> {
     use auth::UserId;
     use axum::Extension;
